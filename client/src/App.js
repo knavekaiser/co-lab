@@ -1,9 +1,4 @@
-import {
-  useState,
-  useEffect,
-  // useRef,
-  useContext,
-} from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { SocketContext } from "./context/socketContext";
 import io from "socket.io-client";
 import "./App.css";
@@ -35,27 +30,57 @@ import "./App.css";
 
 const socket = io();
 
+function resizeWindow() {
+  let vh = window.innerHeight * 0.01;
+  document.body.style.setProperty("--vh", `${vh}px`);
+}
+
 function App() {
   // const socket = useContext(SocketContext);
   // console.log(socket);
+  const user = useRef(Math.random());
+  const [messages, setMessages] = useState([]);
   const [value, setValue] = useState("");
+  const input = useRef(null);
   useEffect(() => {
+    window.addEventListener("resize", () => resizeWindow());
+    resizeWindow();
     socket.on("newData", (data) => {
-      setValue(data.data);
+      setMessages((prev) => {
+        const newMessages = [...prev];
+        newMessages.push(data);
+        return newMessages;
+      });
     });
   }, []);
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]);
   return (
     <div className="App">
-      <header className="App-header">
-        test
+      <ul className="messages">
+        {messages.map((item, i) => (
+          <li className={item.id === user.current ? "self" : "other"} key={i}>
+            {item.message}
+          </li>
+        ))}
+      </ul>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          socket.emit("newMessage", { id: user.current, message: value });
+          setValue("");
+          input.current.focus();
+        }}
+      >
         <input
-          onChange={(e) => {
-            setValue(e.target.value);
-            socket.emit("test", { data: e.target.value });
-          }}
+          ref={input}
+          required={true}
+          onChange={(e) => setValue(e.target.value)}
           value={value}
         />
-      </header>
+        <button type="submit">send</button>
+      </form>
     </div>
   );
 }
