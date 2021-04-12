@@ -33,7 +33,7 @@ import "./App.css";
 //   );
 // }
 
-const socket = io("http://localhost:3002");
+const socket = io("http://localhost:5002");
 
 function App() {
   // const socket = useContext(SocketContext);

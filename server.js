@@ -14,7 +14,7 @@ const path = require("path");
 
 require("dotenv").config();
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5001;
 const URI = process.env.ATLAS_URI;
 
 app.use(express.json());
