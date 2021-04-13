@@ -1,13 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
+import "./index.scss";
 import App from "./App";
-import { SocketContext } from "./context/socketContext";
+import { SocketContextProvider } from "./context/socketContext";
+import { SiteContextProvider } from "./context/SiteContext";
 import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <SiteContextProvider>
+      <SocketContextProvider>
+        <App />
+      </SocketContextProvider>
+    </SiteContextProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

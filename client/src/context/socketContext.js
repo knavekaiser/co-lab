@@ -1,7 +1,13 @@
 import { createContext } from "react";
-import socketio from "socket.io-client";
 import io from "socket.io-client";
 
-// export const socket = io("http://localhost:3001");
-// export const socket2 = io();
+const socket = io();
 export const SocketContext = createContext();
+
+export const SocketContextProvider = ({ children }) => {
+  return (
+    <SocketContext.Provider value={{ socket }}>
+      {children}
+    </SocketContext.Provider>
+  );
+};
