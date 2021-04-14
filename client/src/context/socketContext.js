@@ -13,15 +13,8 @@ export const SocketContextProvider = ({ children }) => {
         },
       })
     : null;
-  const callSocket = user
-    ? io("/call", {
-        query: {
-          username: user.username,
-        },
-      })
-    : null;
   return (
-    <SocketContext.Provider value={{ onlineSocket, callSocket }}>
+    <SocketContext.Provider value={{ onlineSocket }}>
       {children}
     </SocketContext.Provider>
   );

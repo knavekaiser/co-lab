@@ -9,14 +9,9 @@ import { v1 as uuid } from "uuid";
 const LandingPage = () => {
   const history = useHistory();
   const { setUser } = useContext(SiteContext);
-  const { onlineSocket, callSocket } = useContext(SocketContext);
+  const { onlineSocket } = useContext(SocketContext);
   useEffect(() => {
     return () => onlineSocket.disconnect();
-  }, []);
-  useEffect(() => {
-    callSocket.on("call_request", (data) => {
-      console.log(data, "is calling");
-    });
   }, []);
   return (
     <div>
