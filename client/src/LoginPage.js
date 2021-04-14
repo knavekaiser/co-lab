@@ -8,7 +8,7 @@ const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [pass, setPass] = useState("");
   if (user) {
-    return <Redirect to="/" />;
+    return <Redirect to={history.location.state?.from.pathname || "/"} />;
   }
   return (
     <div className="container">
@@ -24,7 +24,7 @@ const LoginPage = () => {
             .then(({ code, user }) => {
               if (code === "ok") {
                 setUser(user);
-                history.push("/");
+                history.push(history.location.state?.from.pathname || "/");
               } else {
                 alert("username/password did not match");
               }

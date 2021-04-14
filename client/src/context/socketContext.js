@@ -1,12 +1,27 @@
-import { createContext } from "react";
+import { createContext, useContext, useState } from "react";
+import { SiteContext } from "./SiteContext";
 import io from "socket.io-client";
 
-const socket = io();
 export const SocketContext = createContext();
 
 export const SocketContextProvider = ({ children }) => {
+  const { user } = useContext(SiteContext);
+  const onlineSocket = user
+    ? io("/", {
+        query: {
+          username: user.username,
+        },
+      })
+    : null;
+  const callSocket = user
+    ? io("/call", {
+        query: {
+          username: user.username,
+        },
+      })
+    : null;
   return (
-    <SocketContext.Provider value={{ socket }}>
+    <SocketContext.Provider value={{ onlineSocket, callSocket }}>
       {children}
     </SocketContext.Provider>
   );

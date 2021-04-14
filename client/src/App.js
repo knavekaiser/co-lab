@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useContext } from "react";
-import { SocketContext } from "./context/socketContext";
 import { SiteContext } from "./context/SiteContext";
 import "./App.scss";
 import LandingPage from "./LandingPage";

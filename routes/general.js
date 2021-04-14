@@ -21,7 +21,7 @@ router.route("/register").post((req, res) => {
       .save()
       .then((user) => {
         ["pass", "__v"].forEach((key) => delete user[key]);
-        const token = signToken(req.user._id, "user");
+        const token = signToken(user._id, "user");
         res.cookie("access_token", token, { httpOnly: true, sameSite: true });
         res.status(200).json({ code: "ok", user: user });
       })
