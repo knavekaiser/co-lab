@@ -58,43 +58,53 @@ io.on("connection", async (socket) => {
     ...new Set(sockets.map((socket) => socket.handshake.query.username)),
   ];
   io.emit("members_online", JSON.stringify(clients));
-  socket.on("join room", (roomID) => {
+  socket.on("join room", (payload) => {
+    const { roomID, username } = JSON.parse(payload);
+    socket.join(roomID);
     if (users[roomID]) {
       const length = users[roomID].length;
       if (length === 4) {
         socket.emit("room full");
         return;
       }
-      users[roomID].push(socket.id);
+      users[roomID].push({ userID: socket.id, username });
     } else {
-      users[roomID] = [socket.id];
+      users[roomID] = [{ userID: socket.id, username }];
     }
     socketToRoom[socket.id] = roomID;
-    const usersInThisRoom = users[roomID].filter((id) => id !== socket.id);
-
+    const usersInThisRoom = users[roomID].filter(
+      (client) => client.userID !== socket.id
+    );
     socket.emit("all users", usersInThisRoom);
   });
 
   socket.on("sending signal", (payload) => {
     io.to(payload.userToSignal).emit("user joined", {
       signal: payload.signal,
-      callerID: payload.callerID,
+      caller: payload.caller,
     });
   });
 
   socket.on("returning signal", (payload) => {
-    io.to(payload.callerID).emit("receiving returned signal", {
+    io.to(payload.caller.callerID).emit("receiving returned signal", {
       signal: payload.signal,
       id: socket.id,
     });
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", (data) => {
     const roomID = socketToRoom[socket.id];
     let room = users[roomID];
     if (room) {
-      room = room.filter((id) => id !== socket.id);
+      let userLeft = "";
+      room = room.filter((client) => {
+        if (client.userID !== socket.id) {
+          userLeft = client.username;
+        }
+        return client.userID !== socket.id;
+      });
       users[roomID] = room;
+      io.to(roomID).emit("user_left", userLeft);
     }
   });
 });
