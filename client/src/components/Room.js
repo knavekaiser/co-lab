@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { SiteContext } from "../context/SiteContext";
+import { SocketContext } from "../context/SocketContext";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 
@@ -22,13 +23,14 @@ const Audio = ({ peer }) => {
 
 const Room = (props) => {
   const { user } = useContext(SiteContext);
+  const { onlineSocket } = useContext(SocketContext);
   const [peers, setPeers] = useState([]);
   const socketRef = useRef();
   const userAudio = useRef();
   const peersRef = useRef([]);
   const roomID = props.match.params.roomID;
   useEffect(() => {
-    socketRef.current = io.connect("/");
+    socketRef.current = onlineSocket; // io.connect("/");
     navigator.mediaDevices
       .getUserMedia({ video: false, audio: true })
       .then((stream) => {
